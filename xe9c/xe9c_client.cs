@@ -44,7 +44,7 @@ public class Xe9c_client
         return $"### CONNECTION INFO ###\n\nName: {_clientName}\nIP: {_ip}\nPort: {_port}";
     }
 
-    private Socket _connectToGateway()
+    public Socket ConnectToGateway()
     {
         IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
         Socket __socket = new Socket(
@@ -54,22 +54,19 @@ public class Xe9c_client
         return __socket;
     }
 
-    private string ReceiveMsg(Socket __socket)
+    public void ReceiveMsg(Socket __socket)
     {
-        byte[] getMsgLength = new byte[1];
-        __socket.Receive(getMsgLength);
-        byte[] getMsg = new byte[getMsgLength[0]];
-        __socket.Receive(getMsg);
-
-        return Encoding.UTF8.GetString(getMsg);
+        while (true)
+        {
+            byte[] getMsg = new byte[2048];
+            __socket.Receive(getMsg);
+            Console.WriteLine("\n"+Encoding.UTF8.GetString(getMsg));
+        }
     }
 
-    private void SendMsg(Socket __socket)
+    public void SendMsg(Socket __socket, string message)
     {
-        string message = Console.ReadLine();
-        byte[] getMsgLength = BitConverter.GetBytes(message.Length);
         byte[] getMsg = Encoding.UTF8.GetBytes(message);
-        __socket.Send(getMsgLength);
         __socket.Send(getMsg);
     }
 }
